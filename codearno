@@ -1,0 +1,35 @@
+#include <HCSR04.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+HCSR04 hc(5, 6); 
+
+const float upperLimit = 50.0; 
+const float lowerLimit = 5.0;  
+const float invalidReading = 400.0; 
+
+void setup() {
+  lcd.begin();
+  lcd.backlight();
+  lcd.print("Jarak Objek : ");
+}
+
+void loop() {
+  float distance = hc.dist(); // Mengukur jarak
+  lcd.setCursor(0, 1);
+
+  // Mengabaikan pembacaan yang tidak valid
+  if (distance >= invalidReading || distance <= 0) {
+    lcd.print("Error Reading  ");
+  } else if (distance < lowerLimit) {
+    lcd.print("Kedeketan Bang  ");
+  } else if (distance > upperLimit) {
+    lcd.print("Terlalu Jauh   ");
+  } else {
+    lcd.print(distance);
+    lcd.print(" cm           ");
+  }
+
+  delay(300);
+}
